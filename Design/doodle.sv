@@ -5,8 +5,8 @@ module doodle(
 	input [10:0] beam_x,
 	input [9:0] beam_y,
 	
-	input signed [3:0] delta_x,  // -8 - 7
-	input signed [3:0] delta_y,
+	input [3:0] delta_x,  
+	input [3:0] delta_y,
 	
 	output logic [2:0][3:0] color
 );
@@ -23,7 +23,8 @@ always_ff @ (posedge clk) begin
 	if (rst) begin
 		draw <= 0;
 	end else begin
-		if (doodle_x <= beam_x <= doodle_x + 80 && doodle_y <= beam_y <= doodle_y + 80)
+		if (doodle_x <= beam_x && beam_x < doodle_x + 80 - 2 
+		&& doodle_y <= beam_y && beam_y < doodle_y + 80 - 1)
 			draw <= 1;
 		else 
 			draw <= 0;
@@ -36,14 +37,13 @@ always_comb begin
 		color[0] = doodle_texture[beam_y - doodle_y][beam_x - doodle_x][0];
 		color[1] = doodle_texture[beam_y - doodle_y][beam_x - doodle_x][1];
 		color[2] = doodle_texture[beam_y - doodle_y][beam_x - doodle_x][2];
-	end else begin
-		color <= '1;
-	end
+	end else color = '1;
 end
 
 always_ff @ (posedge clk) begin
 	if (rst) begin
-	
+		doodle_x <= 670;
+		doodle_y <= 720;
 	end else begin
 		doodle_x <= doodle_x + delta_x;
 		doodle_y <= doodle_y + delta_y;

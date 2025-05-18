@@ -37,8 +37,8 @@ beam_establisher be(
 	.switch_frame(VGA_VS) 
 );
 
-wire signed [3:0] delta_x = 1;  // -8 - 7
-wire signed [3:0] delta_y = 1;
+wire [3:0] delta_x = 0;  // -8 - 7
+wire [3:0] delta_y = 0;
 
 
 logic [2:0][3:0] color;
@@ -57,16 +57,16 @@ doodle d(
 	.color(color)
 );
 
-always_comb  begin
-	if (draw) begin
-		VGA_R = color[0];
-		VGA_G = color[1];
-		VGA_B = color[2];
-	end else begin
-		VGA_R = '0;
-		VGA_G = '0;
-		VGA_B = '0;
-	end
+always_comb begin
+	    if (draw) begin
+	    		VGA_R = color[0];
+	    		VGA_G = color[1];
+	    		VGA_B = color[2];
+	    end else begin
+	    	VGA_R = '0;
+	    	VGA_G = '0;
+	    	VGA_B = '0;
+	    end
 end
 
 endmodule
