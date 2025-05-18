@@ -2,9 +2,9 @@ module beam_establisher(
 	input clk,
 	input rst,
 	
-	output logic [10:0] beam_x;
-	output logic [9:0] beam_y;
-	output logic valid;
+	output logic [10:0] beam_x,
+	output logic [9:0] beam_y,
+	output logic valid,
 
 	output logic switch_line,  // horizontal sync
 	output logic switch_frame  // vertical sync
@@ -12,7 +12,7 @@ module beam_establisher(
 
 logic _placeholder;
 
-always_ff @ (posedge clock) begin
+always_ff @ (posedge clk) begin
 	if (rst) begin
 		beam_x <= '0;
 		beam_y <= '0;
