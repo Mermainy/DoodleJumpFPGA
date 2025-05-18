@@ -3,3 +3,5 @@ db
 output_files
 incremental_db
 simulation
+.qsys_edit
+serv_req_info.txt

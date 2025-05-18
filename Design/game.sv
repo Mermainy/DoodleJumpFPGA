@@ -1,24 +1,42 @@
 module game(
 	input MAX10_CLK1_50,
 	input [9:0] SW,
-	
+	input [1:0] KEY,
+
 	output VGA_HS,
 	output VGA_VS,
-	
 	output logic [3:0] VGA_R,
 	output logic [3:0] VGA_G,
 	output logic [3:0] VGA_B
 );
 
+assign rst = SW[0];
+
 logic clk;
 logic rst;
-
-assign rst = SW[0];
+logic button_left;
+logic button_right;
 
 board_specific bs(
 	.MAX10_CLK1_50(MAX10_CLK1_50),
+	.KEY(KEY),
 	
-	.clk(clk)
+	.clk(clk),
+	.button_left(button_left),
+	.button_right(button_right)
+);
+
+
+logic signed [8:0] delta_x;
+
+control c(
+	.clk(clk),
+	.rst(rst),
+
+	.button_left(button_left),
+	.button_right(button_right),
+	
+	.delta_x(delta_x)
 );
 
 logic [10:0] beam_x;
@@ -37,22 +55,23 @@ beam_establisher be(
 	.switch_frame(VGA_VS) 
 );
 
-wire [3:0] delta_x = 0;  // -8 - 7
-wire [3:0] delta_y = 0;
-
 
 logic [2:0][3:0] color;
-
+logic [9:0] doodle_y;
 
 doodle d(
 	.clk(clk),
 	.rst(rst),
 	
+	.ground(720),
+	.collision(doodle_y >= 700),
+	
 	.beam_x(beam_x),
 	.beam_y(beam_y),
 	
 	.delta_x(delta_x),  // -8 - 7
-	.delta_y(delta_y),
+	
+	.doodle_y(doodle_y),
 	
 	.color(color)
 );

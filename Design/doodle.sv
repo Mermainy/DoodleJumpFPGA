@@ -1,18 +1,24 @@
-module doodle(
+module doodle # (
+	parameter int unsigned VELOCITY = 44,
+	parameter int unsigned ACCELERATION = 4,
+	parameter int unsigned FPS = 50,
+	parameter int unsigned CLK = 50000000
+) (
 	input clk,
 	input rst,
+	input [9:0] ground,
+	input collision,  
 	
 	input [10:0] beam_x,
 	input [9:0] beam_y,
 	
-	input [3:0] delta_x,  
-	input [3:0] delta_y,
-	
+	input signed [8:0] delta_x,
+	output logic [9:0] doodle_y,
 	output logic [2:0][3:0] color
 );
 
-logic [10:0] doodle_x;
-logic [9:0] doodle_y;
+logic signed [11:0] doodle_x;
+
 
 logic [79:0][79:0][2:0][3:0] doodle_texture;
 
@@ -40,13 +46,25 @@ always_comb begin
 	end else color = '1;
 end
 
+logic [$clog2(CLK / FPS):0] fps_counter; 
+logic [7:0] jump_counter;
+// position
 always_ff @ (posedge clk) begin
 	if (rst) begin
 		doodle_x <= 670;
 		doodle_y <= 720;
 	end else begin
-		doodle_x <= doodle_x + delta_x;
-		doodle_y <= doodle_y + delta_y;
+		fps_counter <= fps_counter + 1;
+		if (&fps_counter) begin
+			doodle_x <= doodle_x + delta_x;
+			if (doodle_y >= ground) begin
+				doodle_y <= ground - 1;
+				jump_counter <= 1;
+			end else begin
+				doodle_y <= ground - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 2;
+				jump_counter <= jump_counter + 1;
+			end
+		end
 	end
 end
 
