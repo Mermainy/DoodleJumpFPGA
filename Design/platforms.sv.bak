@@ -1,0 +1,7 @@
+module platforms(
+	output platforms
+)
+
+
+
+endmodule
