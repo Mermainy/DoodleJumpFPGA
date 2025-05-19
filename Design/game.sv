@@ -2,6 +2,8 @@ module game(
 	input MAX10_CLK1_50,
 	input [9:0] SW,
 	input [1:0] KEY,
+	
+	output [9:0] LEDR,
 
 	output VGA_HS,
 	output VGA_VS,
@@ -107,6 +109,8 @@ logic platform_transparencies;
 platforms p(
 	.clk(clk),
 	.rst(rst),
+	
+	.led(LEDR),
 
 	.beam_x(beam_x),
 	.beam_y(beam_y),

@@ -1,6 +1,8 @@
 module platforms(
 	input clk,
 	input rst,
+	
+	output logic [9:0] led,
 
 	input [10:0] beam_x,
 	input [9:0] beam_y,
@@ -17,50 +19,54 @@ logic [29:0][99:0] green_platform_transparency_texture;
 logic [92:0] draw;
 logic [6:0] here_platform_was_generated;
 
+/*assign platforms[0][1] = 342;
+assign platforms[0][0] = 500;
+assign platform_activation[0] = 1;*/
 always_ff @ (posedge clk) begin
 	if (rst) begin
-		for (int i = 0; i < 31; i++) 
+		for (int i = 0; i < 31; i++)
 			for (int j = 0; j < 3; j++) begin
-				platforms[i * 3 + j][0] <= - 162 + i * 30;
-				platforms[i * 3 + j][1] <= 342 + j * 100;
+				platforms[i * 3 + j][0] <= -162 + i * 30;
+				platforms[i * 3 + j][1] <= 342 + j * 114;	
 			end
 		// random activation (6 fors + control)
-		for (int j = 0; j < 7; j++) 
+		/*for (int j = 0; j < 7; j++)
 			for (int i = 0; i < (j < 6 ? 15 : 3); i++) begin
-				if (i == (j < 6 ? 14 : 2) && ~here_platform_was_generated[j]) 
+				if (i == (j < 6 ? 14 : 2) && ~here_platform_was_generated[j])
 					platform_activation[i] <= 1;
 				else begin
 					platform_activation[i] <= 1;//$random(0);
 					if (i == 0) here_platform_was_generated[j] <= platform_activation[i];
 					else here_platform_was_generated[j] <= here_platform_was_generated[j] || platform_activation[i];
 				end
-			end
-		
+				
+			end*/
+			platform_activation <= '1;
 	end else begin
-		
+		led[0] <= platforms[0][0] > 0;
 	end
 end
 
 genvar i;
 generate 
 	for (i = 0; i < 93; i++) begin: name
-		assign draw[i] = platforms[i][1] <= beam_x && beam_x <= platforms[i][1] + 30 - 1
-			&& platforms[i][0] <= beam_x && beam_y <= platforms[i][0] + 100 - 1;
+		assign draw[i] = platforms[i][1] <= beam_x && beam_x <= platforms[i][1] + 100 - 1
+			&& platforms[i][0] <= beam_y && beam_y <= platforms[i][0] + 30 - 1 && platform_activation[i];
 	end
 endgenerate
 
-
-always_comb begin
+always_ff @(posedge clk) begin
 	for (int i = 0; i < 93; i++) begin 
-		if (platform_activation[i] == 1 && draw[i]) begin 
+		if (draw[i]) begin 
 			color[0] = green_platform_texture[beam_y - platforms[i][0]][beam_x - platforms[i][1]][0];
 			color[1] = green_platform_texture[beam_y - platforms[i][0]][beam_x - platforms[i][1]][1];
 			color[2] = green_platform_texture[beam_y - platforms[i][0]][beam_x - platforms[i][1]][2];
 			is_transparent = green_platform_transparency_texture[beam_y - platforms[i][0]][beam_x - platforms[i][1]];
-		end else begin 
-			is_transparent = 1; 
-			color = '1;
-		end
+		end 
+	end
+	if (~|draw) begin 
+		is_transparent = 1; 
+		color = '1;
 	end
 end
 
