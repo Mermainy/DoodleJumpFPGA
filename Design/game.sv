@@ -90,22 +90,32 @@ ultra_beam_substance_painter ubsp(
 	.beam_x(beam_x),
 	.beam_y(beam_y),
 	.draw(draw),
+	.platform_colors(platform_colors),
+	.platform_transparencies(platform_transparencies),
 	
 	.red(VGA_R),
 	.green(VGA_G),
 	.blue(VGA_B)
 );
 
-// always_comb begin
-// 	    if (draw) begin
-// 	    		VGA_R = color[0];
-// 	    		VGA_G = color[1];
-// 	    		VGA_B = color[2];
-// 	    end else begin
-// 	    	VGA_R = '0;
-// 	    	VGA_G = '0;
-// 	    	VGA_B = '0;
-// 	    end
-// end
+logic signed [92:0][1:0][10:0] platforms;
+logic [92:0] platform_activation;
+	
+logic [2:0][3:0] platform_colors;
+logic platform_transparencies;
+
+platforms p(
+	.clk(clk),
+	.rst(rst),
+
+	.beam_x(beam_x),
+	.beam_y(beam_y),
+
+	.platforms(platforms),
+	.platform_activation(platform_activation),
+	
+	.color(platform_colors),
+	.is_transparent(platform_transparencies)
+);
 
 endmodule

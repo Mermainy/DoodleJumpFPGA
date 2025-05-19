@@ -3,8 +3,8 @@ import os
 from PIL import Image
 
 
-image_path = "Doodle80x80GreenLeft.png"
-entity_name = "doodle_left"
+image_path = "Platform100x30.png"
+entity_name = "green_platform"
 
 image = Image.open(image_path)
 pixels = image.load()
@@ -26,6 +26,7 @@ for y in range(image.height):
                                 f"4'b{bin(pixels[x, y][0] // 17)[2:]}}};")
 for y in range(image.height):
     for x in range(image.width):
-        output_file_transparency.write(f"\t{entity_name}_transparency[{y}][{x}] = {int(not bool(pixels[x, y][3]))};")
+        output_file_transparency.write(f"\t{entity_name}_transparency_texture[{y}][{x}] "
+                                       f"= {int(not bool(pixels[x, y][3]))};")
 
 
