@@ -83,7 +83,9 @@ def update_quartus_settings_file(generated_filepath: Path):
     if generated_filepath.name not in qsf_content:
         qsf_content += f'\nset_global_assignment -name SYSTEMVERILOG_FILE {generated_filepath.as_posix()}\n'
         QUARTUS_SETTINGS_FILE.write_text(qsf_content)
-        print(f'File {generated_filepath} appended to the Quartus Settings file')
+        print(f'File {generated_filepath} appended to the Quartus Settings file.')
+        print(f'Please, manually edit {QUARTUS_SETTINGS_FILE} and move included file BEFORE file with macro usage.')
+        print('Order of "set_global_assigment" file names in settings REALLY MATTERS!')
 
 
 if __name__ == '__main__':
