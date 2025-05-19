@@ -73,12 +73,18 @@ logic [7:0] jump_counter;
 // position
 always_ff @ (posedge clk) begin
 	if (rst) begin
-		doodle_x <= 670;
-		doodle_y <= 720;
+		doodle_x <= 472;
+		doodle_y <= 690;
 	end else begin
 		fps_counter <= fps_counter + 1;
 		if (&fps_counter) begin
-			doodle_x <= doodle_x + delta_x;
+			if (doodle_x <= 300) 
+				doodle_x <= 641;
+			else if (doodle_x >= 642) 
+				doodle_x <= 301;
+			else 
+				doodle_x <= doodle_x + delta_x;
+			
 			if (doodle_y >= ground) begin
 				doodle_y <= ground - 1;
 				jump_counter <= 1;

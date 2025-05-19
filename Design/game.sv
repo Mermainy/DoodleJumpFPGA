@@ -17,13 +17,22 @@ logic rst;
 logic button_left;
 logic button_right;
 
+logic [10:0] beam_x_raw;
+logic [9:0] beam_y_raw;
+logic [10:0] beam_x;
+logic [9:0] beam_y;
+
 board_specific bs(
 	.MAX10_CLK1_50(MAX10_CLK1_50),
 	.KEY(KEY),
+	.beam_x_raw(beam_x_raw),
+	.beam_y_raw(beam_y_raw),
 	
 	.clk(clk),
 	.button_left(button_left),
-	.button_right(button_right)
+	.button_right(button_right),
+	.beam_x(beam_x),
+	.beam_y(beam_y)
 );
 
 
@@ -39,16 +48,14 @@ control c(
 	.delta_x(delta_x)
 );
 
-logic [10:0] beam_x;
-logic [9:0] beam_y;
 logic draw;
 
 beam_establisher be(
 	.clk(clk),
 	.rst(rst),
 	
-	.beam_x(beam_x),
-	.beam_y(beam_y),
+	.beam_x(beam_x_raw),
+	.beam_y(beam_y_raw),
 	.valid(draw),
 
 	.switch_line(VGA_HS),  // horizontal sync
@@ -64,8 +71,8 @@ doodle d(
 	.clk(clk),
 	.rst(rst),
 	
-	.ground(720),
-	.collision(doodle_y >= 700),
+	.ground(690),
+	.collision(doodle_y >= 690),
 	
 	.beam_x(beam_x),
 	.beam_y(beam_y),
@@ -80,7 +87,8 @@ doodle d(
 ultra_beam_substance_painter ubsp(
 	.doodle_color(doodle_color),
 	.doodle_transparency(doodle_transparency),
-	
+	.beam_x(beam_x),
+	.beam_y(beam_y),
 	.draw(draw),
 	
 	.red(VGA_R),
