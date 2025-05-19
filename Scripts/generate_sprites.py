@@ -8,12 +8,12 @@ PROJECT_DIR = Path('./')  # .resolve()
 SPRITES_DIR = PROJECT_DIR / 'Sprites'
 TEXTURES_DIR = PROJECT_DIR / 'Design' / 'textures'
 
-QUARTUS_PROJECT_FILE = next(PROJECT_DIR.glob('*.qpf'))
-QUARTUS_SETTINGS_FILE = next(PROJECT_DIR.glob('*.qsf'))
+QUARTUS_PROJECT_FILE = next(PROJECT_DIR.glob('*.qpf'), None)
+QUARTUS_SETTINGS_FILE = next(PROJECT_DIR.glob('*.qsf'), None)
 
 
-assert QUARTUS_PROJECT_FILE.exists(), f'Quartus project file not found "{QUARTUS_PROJECT_FILE}"'
-assert QUARTUS_SETTINGS_FILE.exists(), f'Quartus settings file not found "{QUARTUS_SETTINGS_FILE}"'
+assert QUARTUS_PROJECT_FILE is not None, f'Quartus project file not found in "{PROJECT_DIR}"'
+assert QUARTUS_SETTINGS_FILE is not None, f'Quartus settings file not found in "{PROJECT_DIR}"'
 TEXTURES_DIR.mkdir(parents=True, exist_ok=True)
 
 
