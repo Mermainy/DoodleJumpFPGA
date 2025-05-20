@@ -31,7 +31,8 @@ random_sonya_coin sonya_coin(
 	.fibonacci_LSFR(random_sides)
 );
 
-localparam [92:0] random_start = 93'b000000000000000000000000000000000010000100000001010000000010000000001000000000000110000100001;
+//localparam [92:0] random_start = 93'b000000000000000000000000000000000010000100000001010000000010000000001000000000000110000100001;
+localparam [92:0] random_start = 93'b000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000;
 always_ff @ (posedge clk) begin
 	if (rst) begin
 		for (int i = 0; i < 31; i++)
@@ -44,7 +45,7 @@ always_ff @ (posedge clk) begin
 			for (int i = 0; i < (j < 6 ? 15 : 3); i++) begin
 				if (j * 15 + i > 74) platform_activation[j * 15 + i] <= 0;
 				else if (i == (j < 6 ? 14 : 2) && ~here_platform_was_generated[j])
-					platform_activation[j * 15 + i] <= 1;
+					platform_activation[j * 15 + i] <= 0;
 				else begin
 					platform_activation[j * 15 + i] <= random_start[j * 15 + i];
 					if (i == 0) here_platform_was_generated[j] <= platform_activation[j * 15 + i];

@@ -14,11 +14,11 @@ logic [9:0] doodle_y_prev;
 always_ff @ (posedge clk) begin
 	if (rst) begin
 		doodle_y_prev <= doodle_y;
-		ground[0] <= 690;
+		ground[0] <= 767;
 	end else begin
 		for (int i = 0; i < 93; i++) begin
-			if (doodle_y + 80 >= platforms[i][0] && (platforms[i][1] - 79 <= doodle_x
-			&& doodle_x <= platforms[i][1] || ground[0] == 690) + 99 && $signed(doodle_y) - $signed(doodle_y_prev) > 0
+			if (platforms[i][0] <= doodle_y + 80 && doodle_y + 80 <= platforms[i][0] + 30  /*&& (platforms[i][1] - 51 <= doodle_x
+			&& doodle_x <= platforms[i][1] + 99 || ground[0] == 767)*/ && $signed(doodle_y) - $signed(doodle_y_prev) > 0
 			&& platform_activation[i]) begin
 				ground <= platforms[i];
 			end
