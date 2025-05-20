@@ -20,8 +20,18 @@ logic [92:0] draw;
 logic [6:0] here_platform_was_generated;
 
 /*assign platforms[0][1] = 342;
-assign platforms[0][0] = 500;
-assign platform_activation[0] = 1;*/
+assign platforms[0][0] = -10;
+assign led[0] = platforms[0][0] < 0;*/
+
+logic [15:0] random_sides;
+random_sonya_coin sonya_coin(
+	.clk(clk),
+	.rst(rst),
+	
+	.fibonacci_LSFR(random_sides)
+);
+
+localparam [92:0] random_start = 93'b000000000000000000000000000000000010000100000001010000000010000000001000000000000110000100001;
 always_ff @ (posedge clk) begin
 	if (rst) begin
 		for (int i = 0; i < 31; i++)
@@ -30,28 +40,27 @@ always_ff @ (posedge clk) begin
 				platforms[i * 3 + j][1] <= 342 + j * 114;	
 			end
 		// random activation (6 fors + control)
-		/*for (int j = 0; j < 7; j++)
+		for (int j = 0; j < 7; j++)
 			for (int i = 0; i < (j < 6 ? 15 : 3); i++) begin
-				if (i == (j < 6 ? 14 : 2) && ~here_platform_was_generated[j])
-					platform_activation[i] <= 1;
+				if (j * 15 + i > 74) platform_activation[j * 15 + i] <= 0;
+				else if (i == (j < 6 ? 14 : 2) && ~here_platform_was_generated[j])
+					platform_activation[j * 15 + i] <= 1;
 				else begin
-					platform_activation[i] <= 1;//$random(0);
-					if (i == 0) here_platform_was_generated[j] <= platform_activation[i];
-					else here_platform_was_generated[j] <= here_platform_was_generated[j] || platform_activation[i];
+					platform_activation[j * 15 + i] <= random_start[j * 15 + i];
+					if (i == 0) here_platform_was_generated[j] <= platform_activation[j * 15 + i];
+					else here_platform_was_generated[j] <= here_platform_was_generated[j] || platform_activation[j * 15 + i];
 				end
-				
-			end*/
-			platform_activation <= '1;
+			end
 	end else begin
-		led[0] <= platforms[0][0] > 0;
+		
 	end
 end
 
 genvar i;
 generate 
 	for (i = 0; i < 93; i++) begin: name
-		assign draw[i] = platforms[i][1] <= beam_x && beam_x <= platforms[i][1] + 100 - 1
-			&& platforms[i][0] <= beam_y && beam_y <= platforms[i][0] + 30 - 1 && platform_activation[i];
+		assign draw[i] =  $signed(platforms[i][1]) <= $signed(beam_x) && $signed(beam_x) <= $signed(platforms[i][1]) + 100 - 1
+			&& $signed(platforms[i][0]) <= $signed(11'(beam_y)) && $signed(11'(beam_y)) <= $signed(platforms[i][0]) + 30 - 1 && platform_activation[i];
 	end
 endgenerate
 

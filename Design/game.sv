@@ -68,19 +68,20 @@ beam_establisher be(
 logic [2:0][3:0] doodle_color;
 logic doodle_transparency;
 logic [9:0] doodle_y;
+logic signed [11:0] doodle_x;
 
 doodle d(
 	.clk(clk),
 	.rst(rst),
 	
-	.ground(690),
-	.collision(doodle_y >= 690),
+	.ground(ground),
 	
 	.beam_x(beam_x),
 	.beam_y(beam_y),
 	
 	.delta_x(delta_x),  // -8 - 7
 	.doodle_y(doodle_y),
+	.doodle_x(doodle_x),
 	
 	.color(doodle_color),
 	.is_transparent(doodle_transparency)
@@ -120,6 +121,20 @@ platforms p(
 	
 	.color(platform_colors),
 	.is_transparent(platform_transparencies)
+);
+
+logic [1:0][9:0] ground;
+
+collision_observer cobs(
+	.clk(clk),
+	.rst(rst),
+
+	.platforms(platforms),
+	.doodle_x(doodle_x),
+	.doodle_y(doodle_y),
+	.platform_activation(platform_activation),
+	
+	.ground(ground)
 );
 
 endmodule

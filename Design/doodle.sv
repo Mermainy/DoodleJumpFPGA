@@ -6,19 +6,19 @@ module doodle # (
 ) (
 	input clk,
 	input rst,
-	input [9:0] ground,
-	input collision,  
+	input [1:0][9:0] ground,
 	
 	input [10:0] beam_x,
 	input [9:0] beam_y,
 	
 	input signed [8:0] delta_x,
 	output logic [9:0] doodle_y,
+	output logic signed [11:0] doodle_x,
 	output logic [2:0][3:0] color,
 	output logic is_transparent
 );
 
-logic signed [11:0] doodle_x;
+
 
 
 logic [79:0][79:0][2:0][3:0] doodle_right_texture;
@@ -76,7 +76,8 @@ always_ff @ (posedge clk) begin
 			else 
 				doodle_x <= doodle_x + delta_x;
 			
-			if (doodle_y >= ground) begin
+			if (doodle_y + 80 >= ground[0] && ground[1] <= doodle_x 
+			&& doodle_x <= ground[0] + 100) begin
 				doodle_y <= ground - 1;
 				jump_counter <= 1;
 			end else begin
