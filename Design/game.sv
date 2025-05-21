@@ -68,7 +68,7 @@ beam_establisher be(
 logic [2:0][3:0] doodle_color;
 logic doodle_transparency;
 logic [9:0] doodle_y;
-logic signed [11:0] doodle_x;
+logic [10:0] doodle_x;
 
 doodle d(
 	.clk(clk),
@@ -82,7 +82,8 @@ doodle d(
 	.delta_x(delta_x),  // -8 - 7
 	.doodle_y(doodle_y),
 	.doodle_x(doodle_x),
-	
+	.led(LEDR[1]),
+
 	.color(doodle_color),
 	.is_transparent(doodle_transparency)
 );
@@ -111,7 +112,7 @@ platforms p(
 	.clk(clk),
 	.rst(rst),
 	
-	.led(LEDR),
+	//.led(LEDR),
 
 	.beam_x(beam_x),
 	.beam_y(beam_y),
@@ -128,7 +129,7 @@ logic [1:0][9:0] ground;
 collision_observer cobs(
 	.clk(clk),
 	.rst(rst),
-
+	.led(LEDR[0]),
 	.platforms(platforms),
 	.doodle_x(doodle_x),
 	.doodle_y(doodle_y),

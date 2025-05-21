@@ -37,9 +37,9 @@
 # -------------------------------------------------------------------------- #
 
 
-set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/doodle_left.sv
-set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/doodle_right.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/platform_green.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/doodle_right.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/doodle_left.sv
 set_global_assignment -name FAMILY "MAX 10"
 set_global_assignment -name DEVICE 10M50DAF484C7G
 set_global_assignment -name TOP_LEVEL_ENTITY game

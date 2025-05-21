@@ -15,7 +15,9 @@ module doodle # (
 	output logic [9:0] doodle_y,
 	output logic [10:0] doodle_x,
 	output logic [2:0][3:0] color,
-	output logic is_transparent
+	output logic is_transparent,
+	
+	output logic led
 );
 
 
@@ -62,12 +64,15 @@ end
 
 logic [$clog2(CLK / FPS):0] fps_counter; 
 logic [7:0] jump_counter;
+
+logic start_jumping;
 // position
 always_ff @ (posedge clk) begin
 	if (rst) begin
 		doodle_x <= 472;
 		doodle_y <= 687;
-	end else begin
+		start_jumping <= 0;
+	end else if (start_jumping) begin
 		fps_counter <= fps_counter + 1;
 		if (&fps_counter) begin
 			if (doodle_x <= 300) 
@@ -76,9 +81,9 @@ always_ff @ (posedge clk) begin
 				doodle_x <= 301;
 			else 
 				doodle_x <= $signed(doodle_x) + delta_x;
-			
-			if ($signed(ground[0]) <= $signed(doodle_y) + 80 && $signed(doodle_y) + 80 <= $signed(ground[0]) + 30 && ($signed(ground[1]) <= $signed(doodle_x) 
-			&& $signed(doodle_x) <= $signed(ground[1]) + 99  || ground[0] >= 767)) begin
+			led <= ground[1] <= $signed(doodle_x) && $signed(doodle_x) <= ground[1] + 99 || ground[0] >= 767;
+			if (ground[0] <= doodle_y + 80 && doodle_y + 80 <= ground[0] + 30
+					&& (ground[1] <= $signed(doodle_x) && $signed(doodle_x) <= ground[1] + 99  || ground[0] >= 767)) begin
 				doodle_y <= ground[0] - 80 - 1;
 				jump_counter <= 1;
 			end else begin
@@ -86,7 +91,8 @@ always_ff @ (posedge clk) begin
 				jump_counter <= jump_counter + 1;
 			end
 		end
-	end
+	end else if (~start_jumping)
+		start_jumping <= delta_x != 0;
 end
 
 endmodule
