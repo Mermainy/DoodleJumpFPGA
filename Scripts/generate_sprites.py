@@ -81,14 +81,14 @@ def update_quartus_settings_file(generated_filepath: Path):
 
     if generated_filepath.name in qsf_content:
         print(f'WARNING: File "{generated_filepath}" has already been appended to the Quartus Settings file.')
-    else:
-        insertion_coordinate = qsf_content.index('set_global_assignment')
-        qsf_content = (f'{qsf_content[:insertion_coordinate]}'
-                       f'set_global_assignment -name SYSTEMVERILOG_FILE {generated_filepath.as_posix()}\n'
-                       f'{qsf_content[insertion_coordinate:]}')
-        QUARTUS_SETTINGS_FILE.write_text(qsf_content)
-        print(f'SUCCESS: File "{generated_filepath}" appended to the Quartus Settings file, '
-              f'it was inserted before the file with this macro use, order matters.')
+        return
+    insertion_coordinate = qsf_content.index('set_global_assignment')
+    qsf_content = (f'{qsf_content[:insertion_coordinate]}'
+                   f'set_global_assignment -name SYSTEMVERILOG_FILE {generated_filepath.as_posix()}\n'
+                   f'{qsf_content[insertion_coordinate:]}')
+    QUARTUS_SETTINGS_FILE.write_text(qsf_content)
+    print(f'SUCCESS: File "{generated_filepath}" appended to the Quartus Settings file, '
+          f'it was inserted before the file with this macro use, order matters.')
 
 
 if __name__ == '__main__':
