@@ -13,7 +13,7 @@ module doodle # (
 	
 	input signed [8:0] delta_x,
 	output logic [9:0] doodle_y,
-	output logic signed [11:0] doodle_x,
+	output logic [10:0] doodle_x,
 	output logic [2:0][3:0] color,
 	output logic is_transparent
 );
@@ -21,11 +21,11 @@ module doodle # (
 
 
 logic [79:0][79:0][2:0][3:0] doodle_left_rgb;
-logic [79:0][79:0][2:0][3:0] doodle_left_alpha;
+logic [79:0][79:0] doodle_left_alpha;
 `INITIAL_DOODLE_LEFT
 
 logic [79:0][79:0][2:0][3:0] doodle_right_rgb;
-logic [79:0][79:0][2:0][3:0] doodle_right_alpha;
+logic [79:0][79:0] doodle_right_alpha;
 `INITIAL_DOODLE_RIGHT
 
 logic draw;
@@ -75,10 +75,10 @@ always_ff @ (posedge clk) begin
 			else if (doodle_x >= 642) 
 				doodle_x <= 301;
 			else 
-				doodle_x <= doodle_x + delta_x;
+				doodle_x <= $signed(doodle_x) + delta_x;
 			
-			if (ground[0] <= doodle_y + 80 && doodle_y + 80 <= ground[0] + 30  /*&& (ground[1] - 51 <= doodle_x 
-			&& doodle_x <= ground[1] + 99 || ground[0] == 767)*/) begin
+			if ($signed(ground[0]) <= $signed(doodle_y) + 80 && $signed(doodle_y) + 80 <= $signed(ground[0]) + 30 && ($signed(ground[1]) <= $signed(doodle_x) 
+			&& $signed(doodle_x) <= $signed(ground[1]) + 99  || ground[0] >= 767)) begin
 				doodle_y <= ground[0] - 80 - 1;
 				jump_counter <= 1;
 			end else begin

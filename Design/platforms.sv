@@ -15,7 +15,7 @@ module platforms(
 );
 
 logic [29:0][99:0][2:0][3:0] platform_green_rgb;
-logic [29:0][99:0][2:0][3:0] platform_green_alpha;
+logic [29:0][99:0] platform_green_alpha;
 `INITIAL_PLATFORM_GREEN
 
 logic [92:0] draw;
@@ -34,7 +34,7 @@ random_sonya_coin sonya_coin(
 );
 
 //localparam [92:0] random_start = 93'b000000000000000000000000000000000010000100000001010000000010000000001000000000000110000100001;
-localparam [92:0] random_start = 93'b000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000;
+localparam [92:0] random_start = 93'b000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000;
 always_ff @ (posedge clk) begin
 	if (rst) begin
 		for (int i = 0; i < 31; i++)
