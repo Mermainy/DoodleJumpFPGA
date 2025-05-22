@@ -1,4 +1,8 @@
-module platforms(
+module platforms # (
+	parameter int unsigned CONST = 10,
+	parameter int unsigned FPS = 50,
+	parameter int unsigned CLK = 50000000
+) (
 	input clk,
 	input rst,
 	
@@ -6,12 +10,18 @@ module platforms(
 
 	input [10:0] beam_x,
 	input [9:0] beam_y,
+	
+	input [9:0] doodle_y,
+	input [10:0] doodle_x,
 
+	input [1:0][9:0] ground,
+	
 	output logic signed [92:0][1:0][10:0] platforms,
 	output logic [92:0] platform_activation,
 	
 	output logic [2:0][3:0] color,
-	output logic is_transparent
+	output logic is_transparent,
+	output logic [1:0] move_counter
 );
 
 logic [29:0][99:0][2:0][3:0] platform_green_rgb;
@@ -33,8 +43,10 @@ random_sonya_coin sonya_coin(
 	.fibonacci_LSFR(random_sides)
 );
 
-//localparam [92:0] random_start = 93'b000000000000000000000000000000000010000100000001010000000010000000001000000000000110000100001;
-localparam [92:0] random_start = 93'b000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000;
+logic [$clog2(CLK / FPS):0] fps_counter; 
+
+localparam [92:0] random_start = 93'b000000000000000000000000000000000010000100000001010000000010000000001000000000000110000100001;
+//localparam [92:0] random_start = 93'b000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000;
 always_ff @ (posedge clk) begin
 	if (rst) begin
 		for (int i = 0; i < 31; i++)
@@ -47,7 +59,7 @@ always_ff @ (posedge clk) begin
 			for (int i = 0; i < (j < 6 ? 15 : 3); i++) begin
 				if (j * 15 + i > 74) platform_activation[j * 15 + i] <= 0;
 				else if (i == (j < 6 ? 14 : 2) && ~here_platform_was_generated[j])
-					platform_activation[j * 15 + i] <= 0;
+					platform_activation[j * 15 + i] <= 1;
 				else begin
 					platform_activation[j * 15 + i] <= random_start[j * 15 + i];
 					if (i == 0) here_platform_was_generated[j] <= platform_activation[j * 15 + i];
@@ -55,7 +67,22 @@ always_ff @ (posedge clk) begin
 				end
 			end
 	end else begin
-		
+		fps_counter <= fps_counter + 1;
+		if (&fps_counter) begin
+			for (int i = 0; i < 93; i++) begin 
+				if (ground[0] + move_counter * CONST <= doodle_y + 80 
+						&& doodle_y + 80 <= ground[0] + move_counter * CONST + 30
+						&& ground[1] - 61 <= doodle_x && doodle_x <= ground[1] + 80
+						&& ground[0] + move_counter * CONST < 520) begin
+						platforms[i][0] <= platforms[i][0] + CONST;
+					move_counter <= 1;
+				end else if (move_counter != 0) begin
+					platforms[i][0] <= platforms[i][0] + CONST;
+					move_counter <= move_counter + 1;
+				end
+			end
+			
+		end
 	end
 end
 
