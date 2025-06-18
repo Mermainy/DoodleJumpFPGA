@@ -20,8 +20,7 @@ module platforms # (
 	output logic [92:0] platform_activation,
 	
 	output logic [2:0][3:0] color,
-	output logic is_transparent,
-	output logic [1:0] move_counter
+	output logic is_transparent
 );
 
 logic [29:0][99:0][2:0][3:0] platform_green_rgb;
@@ -43,7 +42,6 @@ random_sonya_coin sonya_coin(
 	.fibonacci_LSFR(random_sides)
 );
 
-logic [$clog2(CLK / FPS):0] fps_counter; 
 
 localparam [92:0] random_start = 93'b000000000000000000000000000000000010000100000001010000000010000000001000000000000110000100001;
 //localparam [92:0] random_start = 93'b000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000;
@@ -66,24 +64,7 @@ always_ff @ (posedge clk) begin
 					else here_platform_was_generated[j] <= here_platform_was_generated[j] || platform_activation[j * 15 + i];
 				end
 			end
-	end else begin
-		fps_counter <= fps_counter + 1;
-		if (&fps_counter) begin
-			for (int i = 0; i < 93; i++) begin 
-				if (ground[0] + move_counter * CONST <= doodle_y + 80 
-						&& doodle_y + 80 <= ground[0] + move_counter * CONST + 30
-						&& ground[1] - 61 <= doodle_x && doodle_x <= ground[1] + 80
-						&& ground[0] + move_counter * CONST < 520) begin
-						platforms[i][0] <= platforms[i][0] + CONST;
-					move_counter <= 1;
-				end else if (move_counter != 0) begin
-					platforms[i][0] <= platforms[i][0] + CONST;
-					move_counter <= move_counter + 1;
-				end
-			end
-			
-		end
-	end
+		end 
 end
 
 genvar i;

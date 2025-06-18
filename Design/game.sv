@@ -75,12 +75,11 @@ doodle d(
 	.rst(rst),
 	
 	.ground(ground),
-	.ground_id(ground_id),
 	
 	.beam_x(beam_x),
 	.beam_y(beam_y),
 	
-	.move_counter(move_counter),
+	.collision(doodle_collision),
 	
 	.delta_x(delta_x),  // -8 - 7
 	.doodle_y(doodle_y),
@@ -110,7 +109,6 @@ logic [92:0] platform_activation;
 	
 logic [2:0][3:0] platform_colors;
 logic platform_transparencies;
-logic [1:0] move_counter;
 
 platforms p(
 	.clk(clk),
@@ -130,13 +128,12 @@ platforms p(
 	.platform_activation(platform_activation),
 	
 	.color(platform_colors),
-	.is_transparent(platform_transparencies),
-	
-	.move_counter(move_counter)
+	.is_transparent(platform_transparencies)
 );
 
 logic [1:0][9:0] ground;
 logic [6:0] ground_id;
+logic doodle_collision;
 
 collision_observer cobs(
 	.clk(clk),
@@ -146,9 +143,8 @@ collision_observer cobs(
 	.doodle_x(doodle_x),
 	.doodle_y(doodle_y),
 	.platform_activation(platform_activation),
-	
-	.ground(ground),
-	.ground_id(ground_id)
+	.doodle_collision(doodle_collision),
+	.ground(ground)
 );
 
 logic [9:0] delta;
