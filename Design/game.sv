@@ -139,8 +139,6 @@ logic platform_transparencies;
 platforms p(
 	.clk(clk),
 	.rst(rst),
-	
-	//.led(LEDR),
 
 	.beam_x(beam_x),
 	.beam_y(beam_y),
@@ -155,16 +153,6 @@ platforms p(
 	
 	.color(platform_colors),
 	.is_transparent(platform_transparencies)
-);
-
-logic [9:0] delta;
-platforms_mover(
-	.clk(clk),
-	.rst(rst),
-	.doodle_x(doodle_x),
-	.doodle_y(doodle_y),
-	.delta(delta),
-	.ground(ground)
 );
 
 endmodule
