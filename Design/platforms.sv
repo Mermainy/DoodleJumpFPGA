@@ -1,8 +1,12 @@
-module platforms (
+module platforms # (
+    parameter int unsigned FPS,
+	parameter int unsigned CLK
+) (
 	input clk,
 	input rst,
+	input [$clog2(CLK / FPS):0] fps_counter,
 	
-	//output logic [9:0] led,
+	output logic led,
 
 	input [10:0] beam_x,
 	input [9:0] beam_y,
@@ -10,7 +14,7 @@ module platforms (
 	input [9:0] doodle_y,
 	input [10:0] doodle_x,
 
-	input [1:0][9:0] ground,
+	input move_collision,
 	
 	output logic signed [92:0][1:0][10:0] platforms,
 	output logic [92:0] platform_activation,
@@ -38,11 +42,12 @@ random_sonya_coin sonya_coin(
 	.fibonacci_LSFR(random_sides)
 );
 
-
+logic [3:0] move_counter;
 localparam [92:0] random_start = 93'b000000000000000000000000000000000010000100000001010000000010000000001000000000000110000100001;
 //localparam [92:0] random_start = 93'b000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000;
-always_ff @ (posedge clk) begin
+always_ff @ (posedge clk)
 	if (rst) begin
+	    move_counter <= '0;
 		for (int i = 0; i < 31; i++)
 			for (int j = 0; j < 3; j++) begin
 				platforms[i * 3 + j][0] <= -162 + i * 30;
@@ -60,8 +65,15 @@ always_ff @ (posedge clk) begin
 					else here_platform_was_generated[j] <= here_platform_was_generated[j] || platform_activation[j * 15 + i];
 				end
 			end
-		end 
-end
+    end else if (&fps_counter) begin
+        if (move_collision || move_counter) begin
+            move_counter <= move_counter + 1;
+            for (int i = 0; i < 93; i++)
+                platforms[i][0] <= platforms[i][0] + 12;
+        end
+        if (move_collision)
+             led <= 1;
+    end
 
 genvar i;
 generate 

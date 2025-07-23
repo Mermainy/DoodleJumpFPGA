@@ -1,5 +1,5 @@
 module game #(
-    parameter int unsigned FPS = 50,
+    parameter int unsigned FPS = 360,
 	parameter int unsigned CLK = 50000000
 ) (
 	input MAX10_CLK1_50,
@@ -10,7 +10,9 @@ module game #(
 	output VGA_VS,
 	output logic [3:0] VGA_R,
 	output logic [3:0] VGA_G,
-	output logic [3:0] VGA_B
+	output logic [3:0] VGA_B,
+
+	output [9:0] LEDR
 );
 
 logic clk;
@@ -75,6 +77,7 @@ beam_establisher be(
 
 logic [1:0][9:0] ground;
 logic doodle_collision;
+logic move_collision;
 collision_observer cobs(
 	.clk(clk),
 	.rst(rst),
@@ -86,7 +89,10 @@ collision_observer cobs(
 	.doodle_fall_direction(doodle_fall_direction),
 
 	.doodle_collision(doodle_collision),
-	.ground(ground)
+	.move_collision(move_collision),
+	.ground(ground),
+
+	.led(LEDR[0])
 );
 
 logic [2:0][3:0] doodle_color;
@@ -104,7 +110,8 @@ doodle #(
 
 	.beam_x(beam_x),
 	.beam_y(beam_y),
-	
+	.move_collision(move_collision),
+
 	.ground(ground),
 	.collision(doodle_collision),
 	.game_state(game_state),
@@ -136,9 +143,13 @@ logic signed [92:0][1:0][10:0] platforms;
 logic [92:0] platform_activation;
 logic [2:0][3:0] platform_colors;
 logic platform_transparencies;
-platforms p(
+platforms #(
+    .FPS(FPS),
+	.CLK(CLK)
+) p (
 	.clk(clk),
 	.rst(rst),
+	.fps_counter(fps_counter),
 
 	.beam_x(beam_x),
 	.beam_y(beam_y),
@@ -146,13 +157,15 @@ platforms p(
 	.doodle_y(doodle_y),
 	.doodle_x(doodle_x),
 
-	.ground(ground),
+	.move_collision(move_collision),
 	
 	.platforms(platforms),
 	.platform_activation(platform_activation),
 	
 	.color(platform_colors),
-	.is_transparent(platform_transparencies)
+	.is_transparent(platform_transparencies),
+
+	.led(LEDR[1])
 );
 
 endmodule

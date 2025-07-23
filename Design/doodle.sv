@@ -1,9 +1,8 @@
 module doodle # (
     parameter int unsigned FPS,
 	parameter int unsigned CLK,
-	parameter int unsigned VELOCITY = 40,
-	parameter int unsigned ACCELERATION = 4,
-	parameter int unsigned CONST = 10
+	parameter int unsigned VELOCITY = 9,
+	parameter int unsigned ACCELERATION = 2
 ) (
 	input clk,
 	input rst,
@@ -88,7 +87,7 @@ always_ff @ (posedge clk) begin
 				jump_counter <= 1;
 			end else begin
 			    doodle_y_prev <= doodle_y;
-				doodle_y <= ground[0] - 80 - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 2;
+				doodle_y <= ground[0] - 80 - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 2 / 10;
 				jump_counter <= jump_counter + 1;
 			end
 		end
