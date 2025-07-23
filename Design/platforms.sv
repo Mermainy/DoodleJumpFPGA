@@ -1,8 +1,4 @@
-module platforms # (
-	parameter int unsigned CONST = 10,
-	parameter int unsigned FPS = 50,
-	parameter int unsigned CLK = 50000000
-) (
+module platforms (
 	input clk,
 	input rst,
 	

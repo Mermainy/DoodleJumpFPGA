@@ -1,9 +1,10 @@
-module game(
+module game #(
+    parameter int unsigned FPS = 50,
+	parameter int unsigned CLK = 50000000
+) (
 	input MAX10_CLK1_50,
 	input [9:0] SW,
 	input [1:0] KEY,
-	
-	output [9:0] LEDR,
 
 	output VGA_HS,
 	output VGA_VS,
@@ -12,17 +13,23 @@ module game(
 	output logic [3:0] VGA_B
 );
 
-assign rst = SW[0];
-
 logic clk;
-logic rst;
+wire rst = SW[0];
+logic [$clog2(CLK / FPS):0] fps_counter;
+logic [1:0] game_state;
+
 logic button_left;
 logic button_right;
-
 logic [10:0] beam_x_raw;
 logic [9:0] beam_y_raw;
 logic [10:0] beam_x;
 logic [9:0] beam_y;
+
+always_ff @ (posedge clk)
+    if (rst)
+        fps_counter <= '0;
+    else
+        fps_counter <= fps_counter + 1;
 
 board_specific bs(
 	.MAX10_CLK1_50(MAX10_CLK1_50),
@@ -37,21 +44,23 @@ board_specific bs(
 	.beam_y(beam_y)
 );
 
-
 logic signed [8:0] delta_x;
-
-control c(
+control #(
+    .FPS(FPS),
+	 .CLK(CLK)
+) c (
 	.clk(clk),
 	.rst(rst),
+	.fps_counter(fps_counter),
 
 	.button_left(button_left),
 	.button_right(button_right),
 	
+	.game_state(game_state),
 	.delta_x(delta_x)
 );
 
 logic draw;
-
 beam_establisher be(
 	.clk(clk),
 	.rst(rst),
@@ -64,27 +73,46 @@ beam_establisher be(
 	.switch_frame(VGA_VS) 
 );
 
+logic [1:0][9:0] ground;
+logic doodle_collision;
+collision_observer cobs(
+	.clk(clk),
+	.rst(rst),
+
+	.platforms(platforms),
+	.doodle_x(doodle_x),
+	.doodle_y(doodle_y),
+	.platform_activation(platform_activation),
+	.doodle_fall_direction(doodle_fall_direction),
+
+	.doodle_collision(doodle_collision),
+	.ground(ground)
+);
 
 logic [2:0][3:0] doodle_color;
 logic doodle_transparency;
+logic doodle_fall_direction;
 logic [9:0] doodle_y;
 logic [10:0] doodle_x;
-
-doodle d(
+doodle #(
+    .FPS(FPS),
+	.CLK(CLK)
+) d (
 	.clk(clk),
 	.rst(rst),
-	
-	.ground(ground),
-	
+	.fps_counter(fps_counter),
+
 	.beam_x(beam_x),
 	.beam_y(beam_y),
 	
+	.ground(ground),
 	.collision(doodle_collision),
-	
-	.delta_x(delta_x),  // -8 - 7
+	.game_state(game_state),
+
+	.delta_x(delta_x),  // [-8:7]
 	.doodle_y(doodle_y),
 	.doodle_x(doodle_x),
-	.led(LEDR[1]),
+	.doodle_fall_direction(doodle_fall_direction),  // false for up
 
 	.color(doodle_color),
 	.is_transparent(doodle_transparency)
@@ -106,10 +134,8 @@ ultra_beam_substance_painter ubsp(
 
 logic signed [92:0][1:0][10:0] platforms;
 logic [92:0] platform_activation;
-	
 logic [2:0][3:0] platform_colors;
 logic platform_transparencies;
-
 platforms p(
 	.clk(clk),
 	.rst(rst),
@@ -131,27 +157,10 @@ platforms p(
 	.is_transparent(platform_transparencies)
 );
 
-logic [1:0][9:0] ground;
-logic [6:0] ground_id;
-logic doodle_collision;
-
-collision_observer cobs(
-	.clk(clk),
-	.rst(rst),
-	.led(LEDR[0]),
-	.platforms(platforms),
-	.doodle_x(doodle_x),
-	.doodle_y(doodle_y),
-	.platform_activation(platform_activation),
-	.doodle_collision(doodle_collision),
-	.ground(ground)
-);
-
 logic [9:0] delta;
 platforms_mover(
 	.clk(clk),
 	.rst(rst),
-	// output logic led,
 	.doodle_x(doodle_x),
 	.doodle_y(doodle_y),
 	.delta(delta),
