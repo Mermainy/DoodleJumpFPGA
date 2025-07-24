@@ -1,15 +1,23 @@
 module random_sonya_coin(
 	input clk,
 	input rst,
-	
-	output logic [15:0] fibonacci_LSFR
+
+	output logic [14:0] corrected_fibonacci_LSFR
 );
 
+logic [2:0][15:0] fibonacci_LSFR;
 always_ff @ (posedge clk) begin
-  if (rst)
-    fibonacci_LSFR <= 16'b0100001101001101;
-  else
-    fibonacci_LSFR <= {fibonacci_LSFR[14:0], fibonacci_LSFR[15] ^ fibonacci_LSFR[13] ^ fibonacci_LSFR[12] ^ fibonacci_LSFR[10]};
+  if (rst) begin
+    fibonacci_LSFR[0] <= 16'b1001001110100111;
+    fibonacci_LSFR[1] <= 16'b1110111001101001;
+    fibonacci_LSFR[2] <= 16'b1100000111111011;
+    corrected_fibonacci_LSFR <= '0;
+  end else begin
+    fibonacci_LSFR[0] <= {fibonacci_LSFR[0][14:0], fibonacci_LSFR[0][15] ^ fibonacci_LSFR[0][13] ^ fibonacci_LSFR[0][12] ^ fibonacci_LSFR[0][10]};
+    fibonacci_LSFR[1] <= {fibonacci_LSFR[1][14:0], fibonacci_LSFR[1][15] ^ fibonacci_LSFR[1][13] ^ fibonacci_LSFR[1][12] ^ fibonacci_LSFR[1][10]};
+    fibonacci_LSFR[2] <= {fibonacci_LSFR[2][14:0], fibonacci_LSFR[2][15] ^ fibonacci_LSFR[2][13] ^ fibonacci_LSFR[2][12] ^ fibonacci_LSFR[2][10]};
+    corrected_fibonacci_LSFR <= fibonacci_LSFR[0] & fibonacci_LSFR[1] & fibonacci_LSFR[2];
+	end
 end
 
 

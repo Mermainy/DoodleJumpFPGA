@@ -1,6 +1,7 @@
 module game #(
     parameter int unsigned FPS = 360,
-	parameter int unsigned CLK = 50000000
+	parameter int unsigned CLK = 50000000,
+	parameter int signed EARTH = 768
 ) (
 	input MAX10_CLK1_50,
 	input [9:0] SW,
@@ -78,7 +79,9 @@ beam_establisher be(
 logic [1:0][9:0] ground;
 logic doodle_collision;
 logic move_collision;
-collision_observer cobs(
+collision_observer #(
+    .EARTH(EARTH)
+) cobs (
 	.clk(clk),
 	.rst(rst),
 
@@ -90,9 +93,7 @@ collision_observer cobs(
 
 	.doodle_collision(doodle_collision),
 	.move_collision(move_collision),
-	.ground(ground),
-
-	.led(LEDR[0])
+	.ground(ground)
 );
 
 logic [2:0][3:0] doodle_color;
@@ -145,7 +146,8 @@ logic [2:0][3:0] platform_colors;
 logic platform_transparencies;
 platforms #(
     .FPS(FPS),
-	.CLK(CLK)
+	.CLK(CLK),
+	.EARTH(EARTH)
 ) p (
 	.clk(clk),
 	.rst(rst),
@@ -165,7 +167,7 @@ platforms #(
 	.color(platform_colors),
 	.is_transparent(platform_transparencies),
 
-	.led(LEDR[1])
+	.led(LEDR)
 );
 
 endmodule

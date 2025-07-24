@@ -1,4 +1,6 @@
-module collision_observer (
+module collision_observer #(
+    parameter int signed EARTH
+) (
 	input clk,
 	input rst,
 
@@ -19,13 +21,13 @@ assign led = move_collision;
 
 always_ff @ (posedge clk)
 	if (rst) begin
-		ground[0] <= 767;
+		ground[0] <= EARTH;
 		doodle_collision <= 0;
 		move_collision <= 0;
 	end else begin
 	    doodle_collision <= 0;
 	    move_collision <= 0;
-		for (int i = 0; i < 93; i++)
+		for (int i = 0; i < 90; i++)
 			if (platform_activation[i] 
 					&& platforms[i][0] - 80 <= doodle_y && doodle_y <= platforms[i][0] - 50
 					&& platforms[i][1] - 61 <= doodle_x && doodle_x <= platforms[i][1] + 80
@@ -36,7 +38,7 @@ always_ff @ (posedge clk)
 				if (ground[0] < 420)
 				    move_collision <= 1;
 			end
-		if (ground[0] == 767 && doodle_y > 767 - 80)
+		if (ground[0] == EARTH && doodle_y > EARTH - 80)
 		    doodle_collision <= 1;
 	end
 
