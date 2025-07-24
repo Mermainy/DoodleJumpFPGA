@@ -14,6 +14,7 @@ module doodle # (
 	input [1:0][9:0] ground,
 	input collision,
 	input [1:0] game_state,
+	input move_collision,
 
 	input signed [8:0] delta_x,
 	output logic [9:0] doodle_y,
@@ -65,6 +66,7 @@ always_ff @ (posedge clk) begin
 end
 
 logic [7:0] jump_counter;
+logic [3:0] move_counter;
 logic [9:0] doodle_y_prev;
 // positioning
 always_ff @ (posedge clk) begin
@@ -73,6 +75,7 @@ always_ff @ (posedge clk) begin
 		doodle_y <= 687;
 		doodle_y_prev <= 687;
 		jump_counter <= '0;
+		move_counter <= '0;
 	end else if (game_state == 1) begin
 		if (&fps_counter) begin
 			if (doodle_x <= 300) 
@@ -90,6 +93,10 @@ always_ff @ (posedge clk) begin
 				doodle_y <= ground[0] - 80 - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 2 / 10;
 				jump_counter <= jump_counter + 1;
 			end
+			if (move_collision || move_counter) begin
+                move_counter <= move_counter + 1;
+                doodle_y <= doodle_y + 12;
+            end
 		end
 	end
 end
