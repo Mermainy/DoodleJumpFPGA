@@ -1,6 +1,7 @@
 module doodle # (
     parameter int unsigned FPS,
 	parameter int unsigned CLK,
+	parameter int signed EARTH,
 	parameter int unsigned VELOCITY = 9,
 	parameter int unsigned ACCELERATION = 2
 ) (
@@ -17,6 +18,7 @@ module doodle # (
 	input move_collision,
 
 	input signed [8:0] delta_x,
+
 	output logic [9:0] doodle_y,
 	output logic [10:0] doodle_x,
 	output doodle_fall_direction,
@@ -72,8 +74,8 @@ logic [9:0] doodle_y_prev;
 always_ff @ (posedge clk) begin
 	if (rst) begin
 		doodle_x <= 472;
-		doodle_y <= 687;
-		doodle_y_prev <= 687;
+		doodle_y <= EARTH - 81;
+		doodle_y_prev <= EARTH - 81;
 		jump_counter <= '0;
 		move_counter <= '0;
 	end else if (game_state == 1) begin
@@ -98,6 +100,12 @@ always_ff @ (posedge clk) begin
                 doodle_y <= doodle_y + 12;
             end
 		end
+	end else if (game_state == 2) begin
+	    if (&fps_counter) begin
+	        doodle_y <= ground[0] - 80 - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 2 / 10;
+	        /*if (doodle_y < EARTH)*/
+	            jump_counter <= jump_counter + 1;
+	    end
 	end
 end
 assign doodle_fall_direction = $signed(doodle_y - doodle_y_prev) > 0;

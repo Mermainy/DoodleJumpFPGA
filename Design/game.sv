@@ -50,7 +50,8 @@ board_specific bs(
 logic signed [8:0] delta_x;
 control #(
     .FPS(FPS),
-	 .CLK(CLK)
+	.CLK(CLK),
+	.EARTH(EARTH)
 ) c (
 	.clk(clk),
 	.rst(rst),
@@ -58,6 +59,7 @@ control #(
 
 	.button_left(button_left),
 	.button_right(button_right),
+	.doodle_y(doodle_y),
 	
 	.game_state(game_state),
 	.delta_x(delta_x)
@@ -103,7 +105,8 @@ logic [9:0] doodle_y;
 logic [10:0] doodle_x;
 doodle #(
     .FPS(FPS),
-	.CLK(CLK)
+	.CLK(CLK),
+	.EARTH(EARTH)
 ) d (
 	.clk(clk),
 	.rst(rst),

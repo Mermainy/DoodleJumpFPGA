@@ -7,20 +7,17 @@ module collision_observer #(
 	input signed [92:0][1:0][10:0] platforms,
 	input [10:0] doodle_x,
 	input [9:0] doodle_y,
-	input logic [92:0] platform_activation,
+	input [92:0] platform_activation,
 	input doodle_fall_direction,
 
 	output logic doodle_collision,
 	output logic move_collision,
-	output logic [1:0][9:0] ground,
-
-	output led
+	output logic [1:0][9:0] ground
 );
-
-assign led = move_collision;
 
 always_ff @ (posedge clk)
 	if (rst) begin
+	    ground[1] <= '0;
 		ground[0] <= EARTH;
 		doodle_collision <= 0;
 		move_collision <= 0;

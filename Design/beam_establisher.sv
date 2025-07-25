@@ -12,12 +12,14 @@ module beam_establisher(
 );
 
 logic _placeholder;
-
 always_ff @ (posedge clk) begin
 	if (rst) begin
 		beam_x <= '0;
 		beam_y <= '0;
 		valid <= 0;
+		switch_line <= 1;
+		switch_frame <= 1;
+		_placeholder <= 0;
 	end else begin
 	    if (beam_x == 0) begin
 	    	switch_line <= 1;
@@ -45,8 +47,7 @@ always_ff @ (posedge clk) begin
 	    	switch_frame <= 0;
 	    else if (beam_y == 805)  // waited for the switching
 	    	beam_y <= '0;
-	    	
-	    
+
 	end
 end
 

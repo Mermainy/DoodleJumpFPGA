@@ -6,8 +6,6 @@ module platforms # (
 	input clk,
 	input rst,
 	input [$clog2(CLK / FPS):0] fps_counter,
-	
-	output logic [9:0] led,
 
 	input [10:0] beam_x,
 	input [9:0] beam_y,
@@ -28,8 +26,6 @@ logic [29:0][99:0][2:0][3:0] platform_green_rgb;
 logic [29:0][99:0] platform_green_alpha;
 `INITIAL_PLATFORM_GREEN
 
-logic [92:0] draw;
-
 logic [14:0] random_sides;
 random_sonya_coin sonya_coin(
 	.clk(clk),
@@ -47,6 +43,8 @@ always_ff @ (posedge clk)
 	    led <= '0;
 	    move_counter <= '0;
 	    platform_teleportation_timer <= 1;
+	    platforms <= '0;
+	    platform_activation <= '0;
 
 		for (int i = 0; i < 30; i++)
 			for (int j = 0; j < 3; j++) begin
@@ -73,6 +71,7 @@ always_ff @ (posedge clk)
             end
     end
 
+logic [92:0] draw;
 genvar i;
 generate 
 	for (i = 0; i < 90; i++) begin: name
