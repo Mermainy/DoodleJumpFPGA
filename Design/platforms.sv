@@ -40,7 +40,6 @@ localparam [89:0] random_start = 90'b0000000000000000101000000000000000100001000
 //localparam [89:0] random_start = 90'b000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000;
 always_ff @ (posedge clk)
 	if (rst) begin
-	    led <= '0;
 	    move_counter <= '0;
 	    platform_teleportation_timer <= 1;
 	    platforms <= '0;
@@ -71,7 +70,7 @@ always_ff @ (posedge clk)
             end
     end
 
-logic [92:0] draw;
+logic [89:0] draw;
 genvar i;
 generate 
 	for (i = 0; i < 90; i++) begin: name

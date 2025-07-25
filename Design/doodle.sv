@@ -2,8 +2,14 @@ module doodle # (
     parameter int unsigned FPS,
 	parameter int unsigned CLK,
 	parameter int signed EARTH,
-	parameter int unsigned VELOCITY = 9,
-	parameter int unsigned ACCELERATION = 2
+	parameter int unsigned VELOCITY,
+	parameter int unsigned ACCELERATION,
+	parameter int unsigned HEIGHT,
+	parameter int unsigned WIDTH,
+	parameter int unsigned START_POSITION_X,
+	parameter int unsigned WORLD_SHIFT,
+	parameter int unsigned GAME_VIEW_LEFT_BORDER_X,
+	parameter int unsigned GAME_VIEW_RIGHT_BORDER_X
 ) (
 	input clk,
 	input rst,
@@ -39,8 +45,8 @@ logic [79:0][79:0] doodle_right_alpha;
 
 
 // coloring
-wire draw = doodle_x <= beam_x && beam_x < doodle_x + 80 - 2
-		&& doodle_y <= beam_y && beam_y < doodle_y + 80 - 1;
+wire draw = doodle_x <= beam_x && beam_x < doodle_x + WIDTH - 2
+		&& doodle_y <= beam_y && beam_y < doodle_y + HEIGHT - 1;
 logic previous_texture_direction;  // 1 - left
 always_ff @ (posedge clk) begin
 	if (rst) begin
@@ -73,37 +79,38 @@ logic [9:0] doodle_y_prev;
 // positioning
 always_ff @ (posedge clk) begin
 	if (rst) begin
-		doodle_x <= 472;
-		doodle_y <= EARTH - 81;
-		doodle_y_prev <= EARTH - 81;
+		doodle_x <= START_POSITION_X;
+		doodle_y <= EARTH - HEIGHT - 1;
+		doodle_y_prev <= EARTH - HEIGHT - 1;
 		jump_counter <= '0;
 		move_counter <= '0;
 	end else if (game_state == 1) begin
 		if (&fps_counter) begin
-			if (doodle_x <= 300) 
-				doodle_x <= 641;
-			else if (doodle_x >= 642) 
-				doodle_x <= 301;
+			if (doodle_x <= GAME_VIEW_LEFT_BORDER_X - WIDTH / 2)
+				doodle_x <= GAME_VIEW_RIGHT_BORDER_X - WIDTH / 2 - 1;
+			else if (doodle_x >= GAME_VIEW_RIGHT_BORDER_X - WIDTH / 2)
+				doodle_x <= GAME_VIEW_LEFT_BORDER_X - WIDTH / 2 + 1;
 			else 
 				doodle_x <= $signed(doodle_x) + delta_x;
 			if (collision) begin
-			    doodle_y_prev <= ground[0] - 80 - 1;
-				doodle_y <= ground[0] - 80 - 1;
+			    doodle_y_prev <= ground[0] - HEIGHT - 1;
+				doodle_y <= ground[0] - HEIGHT - 1;
 				jump_counter <= 1;
 			end else begin
 			    doodle_y_prev <= doodle_y;
-				doodle_y <= ground[0] - 80 - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 2 / 10;
+				doodle_y <= ground[0] - HEIGHT
+				    - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 100;
 				jump_counter <= jump_counter + 1;
 			end
 			if (move_collision || move_counter) begin
                 move_counter <= move_counter + 1;
-                doodle_y <= doodle_y + 12;
+                doodle_y <= doodle_y + WORLD_SHIFT;
             end
 		end
 	end else if (game_state == 2) begin
 	    if (&fps_counter) begin
-	        doodle_y <= ground[0] - 80 - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 2 / 10;
-	        /*if (doodle_y < EARTH)*/
+	        doodle_y <= ground[0] - HEIGHT - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 100;
+	        if (doodle_y < EARTH)
 	            jump_counter <= jump_counter + 1;
 	    end
 	end

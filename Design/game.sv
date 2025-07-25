@@ -1,7 +1,18 @@
 module game #(
     parameter int unsigned FPS = 360,
 	parameter int unsigned CLK = 50000000,
-	parameter int signed EARTH = 768
+	parameter int signed EARTH = 768,
+	parameter int unsigned DOODLE_VELOCITY = 9,
+	parameter int unsigned DOODLE_ACCELERATION = 10,
+	parameter int unsigned DOODLE_HEIGHT = 80,
+	parameter int unsigned DOODLE_WIDTH = 80,
+	parameter int unsigned PLATFORM_HEIGHT = 30,
+	parameter int unsigned PLATFORM_WIDTH = 100,
+	parameter int unsigned PLATFORM_COLLISION_HAPPENING_HEIGHT = 420,
+	parameter int unsigned DOODLE_START_POSITION_X = 472,
+	parameter int unsigned WORLD_SHIFT = 12,
+	parameter int unsigned GAME_VIEW_LEFT_BORDER_X = 340,
+	parameter int unsigned GAME_VIEW_RIGHT_BORDER_X = 682
 ) (
 	input MAX10_CLK1_50,
 	input [9:0] SW,
@@ -11,9 +22,7 @@ module game #(
 	output VGA_VS,
 	output logic [3:0] VGA_R,
 	output logic [3:0] VGA_G,
-	output logic [3:0] VGA_B,
-
-	output [9:0] LEDR
+	output logic [3:0] VGA_B
 );
 
 logic clk;
@@ -51,7 +60,8 @@ logic signed [8:0] delta_x;
 control #(
     .FPS(FPS),
 	.CLK(CLK),
-	.EARTH(EARTH)
+	.EARTH(EARTH),
+	.DOODLE_HEIGHT(DOODLE_HEIGHT)
 ) c (
 	.clk(clk),
 	.rst(rst),
@@ -82,7 +92,12 @@ logic [1:0][9:0] ground;
 logic doodle_collision;
 logic move_collision;
 collision_observer #(
-    .EARTH(EARTH)
+    .EARTH(EARTH),
+    .DOODLE_HEIGHT(DOODLE_HEIGHT),
+    .DOODLE_WIDTH(DOODLE_WIDTH),
+    .PLATFORM_HEIGHT(PLATFORM_HEIGHT),
+    .PLATFORM_WIDTH(PLATFORM_WIDTH),
+    .PLATFORM_COLLISION_HAPPENING_HEIGHT(PLATFORM_COLLISION_HAPPENING_HEIGHT)
 ) cobs (
 	.clk(clk),
 	.rst(rst),
@@ -106,7 +121,15 @@ logic [10:0] doodle_x;
 doodle #(
     .FPS(FPS),
 	.CLK(CLK),
-	.EARTH(EARTH)
+	.EARTH(EARTH),
+	.VELOCITY(DOODLE_VELOCITY),
+	.ACCELERATION(DOODLE_ACCELERATION),
+	.WIDTH(DOODLE_WIDTH),
+	.HEIGHT(DOODLE_HEIGHT),
+	.START_POSITION_X(DOODLE_START_POSITION_X),
+	.WORLD_SHIFT(WORLD_SHIFT),
+	.GAME_VIEW_LEFT_BORDER_X(GAME_VIEW_LEFT_BORDER_X),
+	.GAME_VIEW_RIGHT_BORDER_X(GAME_VIEW_RIGHT_BORDER_X)
 ) d (
 	.clk(clk),
 	.rst(rst),
@@ -129,22 +152,8 @@ doodle #(
 	.is_transparent(doodle_transparency)
 );
 
-ultra_beam_substance_painter ubsp(
-	.doodle_color(doodle_color),
-	.doodle_transparency(doodle_transparency),
-	.beam_x(beam_x),
-	.beam_y(beam_y),
-	.draw(draw),
-	.platform_colors(platform_colors),
-	.platform_transparencies(platform_transparencies),
-	
-	.red(VGA_R),
-	.green(VGA_G),
-	.blue(VGA_B)
-);
-
-logic signed [92:0][1:0][10:0] platforms;
-logic [92:0] platform_activation;
+logic signed [89:0][1:0][10:0] platforms;
+logic [89:0] platform_activation;
 logic [2:0][3:0] platform_colors;
 logic platform_transparencies;
 platforms #(
@@ -168,9 +177,24 @@ platforms #(
 	.platform_activation(platform_activation),
 	
 	.color(platform_colors),
-	.is_transparent(platform_transparencies),
+	.is_transparent(platform_transparencies)
+);
 
-	.led(LEDR)
+ultra_beam_substance_painter #(
+    .GAME_VIEW_LEFT_BORDER_X(GAME_VIEW_LEFT_BORDER_X),
+    .GAME_VIEW_RIGHT_BORDER_X(GAME_VIEW_RIGHT_BORDER_X)
+) ubsp (
+	.doodle_color(doodle_color),
+	.doodle_transparency(doodle_transparency),
+	.beam_x(beam_x),
+	.beam_y(beam_y),
+	.draw(draw),
+	.platform_colors(platform_colors),
+	.platform_transparencies(platform_transparencies),
+
+	.red(VGA_R),
+	.green(VGA_G),
+	.blue(VGA_B)
 );
 
 endmodule

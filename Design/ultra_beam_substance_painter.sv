@@ -1,4 +1,7 @@
-module ultra_beam_substance_painter (
+module ultra_beam_substance_painter #(
+	parameter int unsigned GAME_VIEW_LEFT_BORDER_X,
+	parameter int unsigned GAME_VIEW_RIGHT_BORDER_X
+) (
 	input [2:0][3:0] doodle_color,
 	input doodle_transparency,
 	input [10:0] beam_x,
@@ -14,7 +17,7 @@ module ultra_beam_substance_painter (
 
 always_comb begin
 	if (draw) begin
-		if (beam_x < 341 || beam_x >= 682) begin
+		if (beam_x <= GAME_VIEW_LEFT_BORDER_X || beam_x >= GAME_VIEW_RIGHT_BORDER_X) begin
 			red = '0;
 			green = '0;
 			blue = '0;

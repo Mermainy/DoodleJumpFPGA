@@ -1,7 +1,8 @@
 module control # (
     parameter int unsigned FPS,
 	parameter int unsigned CLK,
-	parameter int signed EARTH
+	parameter int signed EARTH,
+	parameter int unsigned DOODLE_HEIGHT
 ) (
 	input clk,
 	input rst,
@@ -24,7 +25,7 @@ always_ff @ (posedge clk)
 		delta_x <= (-button_left + button_right) * 5;
 		if ((button_left || button_right) && game_state == 0)
 		    game_state <= 1;
-		else if (doodle_y + 70 >= EARTH && game_state == 1)
+		else if (doodle_y + DOODLE_HEIGHT - 10 >= EARTH && game_state == 1)
 		    game_state <= 2;
 	end
 
