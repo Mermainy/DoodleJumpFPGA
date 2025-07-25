@@ -35,13 +35,11 @@ random_sonya_coin sonya_coin(
 );
 
 logic [3:0] move_counter;
-logic [2:0] platform_teleportation_timer;
 localparam [89:0] random_start = 90'b000000000000000010100000000000000010000100000001010000000010000000001000000000000110000100;
 //localparam [89:0] random_start = 90'b000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000;
 always_ff @ (posedge clk)
 	if (rst) begin
 	    move_counter <= '0;
-	    platform_teleportation_timer <= 1;
 	    platforms <= '0;
 	    platform_activation <= '0;
 
