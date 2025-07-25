@@ -1,7 +1,8 @@
 module platforms # (
     parameter int unsigned FPS,
 	parameter int unsigned CLK,
-	parameter int signed EARTH
+	parameter int signed EARTH,
+	parameter int signed WORLD_SHIFT
 ) (
 	input clk,
 	input rst,
@@ -46,14 +47,14 @@ always_ff @ (posedge clk)
 		for (int i = 0; i < 30; i++)
 			for (int j = 0; j < 3; j++) begin
 				platforms[i * 3 + j][0] <= -162 + i * 30;
-				platforms[i * 3 + j][1] <= 342 + j * 114;	
+				platforms[i * 3 + j][1] <= 342 + j * 114;
 			end
 		platform_activation <= random_start;
     end else if (&fps_counter) begin
         if (move_collision || move_counter) begin
             move_counter <= move_counter + 1;
             for (int i = 0; i < 90; i++)
-                platforms[i][0] <= platforms[i][0] + 12;
+                platforms[i][0] <= platforms[i][0] + WORLD_SHIFT;
         end
 
         for (int j = 0; j < 6; j++)

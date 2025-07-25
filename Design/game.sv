@@ -22,7 +22,9 @@ module game #(
 	output VGA_VS,
 	output logic [3:0] VGA_R,
 	output logic [3:0] VGA_G,
-	output logic [3:0] VGA_B
+	output logic [3:0] VGA_B,
+
+	output logic [9:0] LEDR
 );
 
 logic clk;
@@ -159,7 +161,8 @@ logic platform_transparencies;
 platforms #(
     .FPS(FPS),
 	.CLK(CLK),
-	.EARTH(EARTH)
+	.EARTH(EARTH),
+	.WORLD_SHIFT(WORLD_SHIFT)
 ) p (
 	.clk(clk),
 	.rst(rst),
@@ -180,6 +183,22 @@ platforms #(
 	.is_transparent(platform_transparencies)
 );
 
+logic [2:0][3:0] end_signa_color;
+logic end_signa_transparency;
+signa #(
+    .GAME_VIEW_LEFT_BORDER_X(GAME_VIEW_LEFT_BORDER_X)
+) s (
+    .clk(clk),
+    .rst(rst),
+	.game_state(game_state),
+
+	.beam_x(beam_x),
+	.beam_y(beam_y),
+
+    .color(end_signa_color),
+	.is_transparent(end_signa_transparency)
+);
+
 ultra_beam_substance_painter #(
     .GAME_VIEW_LEFT_BORDER_X(GAME_VIEW_LEFT_BORDER_X),
     .GAME_VIEW_RIGHT_BORDER_X(GAME_VIEW_RIGHT_BORDER_X)
@@ -188,13 +207,43 @@ ultra_beam_substance_painter #(
 	.doodle_transparency(doodle_transparency),
 	.beam_x(beam_x),
 	.beam_y(beam_y),
-	.draw(draw),
 	.platform_colors(platform_colors),
 	.platform_transparencies(platform_transparencies),
+	.end_signa_color(end_signa_color),
+	.end_signa_transparency(end_signa_transparency),
+	.tabloid_color(tabloid_color),
+    .tabloid_transparency(tabloid_transparency),
+
+	.draw(draw),
 
 	.red(VGA_R),
 	.green(VGA_G),
 	.blue(VGA_B)
+);
+
+logic [2:0][3:0] tabloid_color;
+logic tabloid_transparency;
+
+tabloid #(
+    .FPS(FPS),
+	.CLK(CLK),
+	.GAME_VIEW_LEFT_BORDER_X(GAME_VIEW_LEFT_BORDER_X)
+) t (
+    .clk(clk),
+	.rst(rst),
+	.fps_counter(fps_counter),
+
+	.game_state(game_state),
+
+	.beam_x(beam_x),
+	.beam_y(beam_y),
+
+	.move_collision(move_collision),
+
+	.color(tabloid_color),
+	.is_transparent(tabloid_transparency),
+
+	.leds(LEDR)
 );
 
 endmodule

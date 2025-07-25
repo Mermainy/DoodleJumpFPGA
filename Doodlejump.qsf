@@ -37,6 +37,16 @@
 # -------------------------------------------------------------------------- #
 
 
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/one_transparent.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/zero_transparent.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/two_transparent.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/three_transparent.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/six_transparent.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/seven_transparent.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/nine_transparent.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/four_transparent.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/five_transparent.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/eight_transparent.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/signa_transparent.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/platform_green.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/doodle_right.sv
@@ -195,5 +205,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE Design/ultra_beam_substance_paint
 set_global_assignment -name SYSTEMVERILOG_FILE Design/random_sonya_coin.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Design/collision_observer.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Design/platforms_mover.sv
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
 set_global_assignment -name SYSTEMVERILOG_FILE Design/signa.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Design/tabloid.sv
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
