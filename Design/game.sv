@@ -10,7 +10,7 @@ module game #(
 	parameter int unsigned PLATFORM_WIDTH = 100,
 	parameter int unsigned PLATFORM_COLLISION_HAPPENING_HEIGHT = 420,
 	parameter int unsigned DOODLE_START_POSITION_X = 472,
-	parameter int unsigned WORLD_SHIFT = 12,
+	parameter int unsigned WORLD_SHIFT = 10,
 	parameter int unsigned GAME_VIEW_LEFT_BORDER_X = 340,
 	parameter int unsigned GAME_VIEW_RIGHT_BORDER_X = 682
 ) (

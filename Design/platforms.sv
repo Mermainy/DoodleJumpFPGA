@@ -3,8 +3,8 @@ module platforms # (
 	parameter int unsigned CLK,
 	parameter int signed EARTH,
 	parameter int unsigned WORLD_SHIFT,
-	parameter int unsigned PLATFORM_HEIGHT,
-	parameter int unsigned PLATFORM_WIDTH
+	parameter int signed PLATFORM_HEIGHT,
+	parameter int signed PLATFORM_WIDTH
 ) (
 	input clk,
 	input rst,
@@ -44,27 +44,24 @@ always_ff @ (posedge clk)
 
 		for (int i = 0; i < 30; i++)
 			for (int j = 0; j < 3; j++) begin
-				platforms[i * 3 + j][0] <= -162 + i * 30;
+				platforms[i * 3 + j][0] <= -132 + i * 30;
 				platforms[i * 3 + j][1] <= 342 + j * 114;
 			end
 		platform_activation <= random_start;
     end else if (&fps_counter) begin
-        if (move_collision || move_counter) begin
-            move_counter <= move_counter + 1;
-            for (int i = 0; i < 90; i++)
-                platforms[i][0] <= platforms[i][0] + WORLD_SHIFT;
-        end
-
         for (int j = 0; j < 6; j++)
-            if ($signed(platforms[j * 15][0]) >= EARTH) begin
-                for (int i = j * 15; i < (j + 1) * 15; i++) begin
-                    if (i == (j + 1) * 15 - 1 && ~random_sides)
-		    			platform_activation[i] <= 1;
-		    		else
-		    			platform_activation[i] <= random_sides[i - (j * 15)];
-		    	    platforms[i][0] <= platforms[i][0] - 948;
-		    	end
+            for (int i = j * 15; i < (j + 1) * 15; i++) begin
+                if ($signed(platforms[j * 15][0]) == EARTH) begin
+                    platform_activation[i] <= random_sides[i - (j * 15)];
+                    if (move_collision || move_counter)
+                        platforms[i][0] <= platforms[i][0] - 900 + WORLD_SHIFT;
+		    	    else
+		    	        platforms[i][0] <= platforms[i][0] - 900;
+		    	end else if (move_collision || move_counter)
+                    platforms[i][0] <= platforms[i][0] + WORLD_SHIFT;
             end
+        if (move_collision || move_counter)
+            move_counter <= move_counter + 1;
     end
 
 logic [89:0] draw;
