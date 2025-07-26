@@ -17,12 +17,9 @@ module tabloid #(
 	input move_collision,
 
 	output logic [2:0][3:0] color,
-	output logic is_transparent,
-
-	output [9:0] leds
+	output logic is_transparent
 );
 
-assign leds = score[9:0];
 logic [13:0] score;
 logic [3:0] move_counter;
 always_ff @ (posedge clk)

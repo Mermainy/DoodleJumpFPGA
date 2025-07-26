@@ -2,7 +2,9 @@ module platforms # (
     parameter int unsigned FPS,
 	parameter int unsigned CLK,
 	parameter int signed EARTH,
-	parameter int signed WORLD_SHIFT
+	parameter int unsigned WORLD_SHIFT,
+	parameter int unsigned PLATFORM_HEIGHT,
+	parameter int unsigned PLATFORM_WIDTH
 ) (
 	input clk,
 	input rst,
@@ -23,10 +25,6 @@ module platforms # (
 	output logic is_transparent
 );
 
-logic [29:0][99:0][2:0][3:0] platform_green_rgb;
-logic [29:0][99:0] platform_green_alpha;
-`INITIAL_PLATFORM_GREEN
-
 logic [14:0] random_sides;
 random_sonya_coin sonya_coin(
 	.clk(clk),
@@ -36,8 +34,8 @@ random_sonya_coin sonya_coin(
 );
 
 logic [3:0] move_counter;
-localparam [89:0] random_start = 90'b000000000000000010100000000000000010000100000001010000000010000000001000000000000110000100;
-//localparam [89:0] random_start = 90'b000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000;
+localparam [89:0] random_start =
+    90'b000000000000000010100000000000000010000100000001010000000010000000001000000000000110000100;
 always_ff @ (posedge clk)
 	if (rst) begin
 	    move_counter <= '0;
@@ -73,10 +71,17 @@ logic [89:0] draw;
 genvar i;
 generate 
 	for (i = 0; i < 90; i++) begin: name
-		assign draw[i] =  $signed(platforms[i][1]) <= $signed(beam_x) && $signed(beam_x) <= $signed(platforms[i][1]) + 100 - 1
-			&& $signed(platforms[i][0]) <= $signed(11'(beam_y)) && $signed(11'(beam_y)) <= $signed(platforms[i][0]) + 30 - 1 && platform_activation[i];
+		assign draw[i] =  $signed(platforms[i][1]) <= $signed(beam_x)
+		    && $signed(beam_x) <= $signed(platforms[i][1]) + PLATFORM_WIDTH - 1
+			&& $signed(platforms[i][0]) <= $signed(11'(beam_y))
+			&& $signed(11'(beam_y)) <= $signed(platforms[i][0]) + PLATFORM_HEIGHT - 1
+			&& platform_activation[i];
 	end
 endgenerate
+
+logic [29:0][99:0][2:0][3:0] platform_green_rgb;
+logic [29:0][99:0] platform_green_alpha;
+`INITIAL_PLATFORM_GREEN
 
 always_ff @(posedge clk) begin
 	for (int i = 0; i < 90; i++) begin

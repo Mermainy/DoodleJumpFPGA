@@ -14,7 +14,8 @@ always_ff @ (posedge clk) begin
     corrected_fibonacci_LSFR <= '0;
   end else begin
     for (int i = 0; i < 3; i++)
-        fibonacci_LSFR[i] <= {fibonacci_LSFR[i][14:0], fibonacci_LSFR[i][15] ^ fibonacci_LSFR[i][13] ^ fibonacci_LSFR[i][12] ^ fibonacci_LSFR[i][10]};
+        fibonacci_LSFR[i] <= {fibonacci_LSFR[i][14:0],
+            fibonacci_LSFR[i][15] ^ fibonacci_LSFR[i][13] ^ fibonacci_LSFR[i][12] ^ fibonacci_LSFR[i][10]};
     corrected_fibonacci_LSFR <= fibonacci_LSFR[0] & fibonacci_LSFR[1] & fibonacci_LSFR[2];
 	 end
 end

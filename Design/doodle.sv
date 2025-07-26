@@ -33,8 +33,6 @@ module doodle # (
 	output logic is_transparent
 );
 
-
-
 logic [79:0][79:0][2:0][3:0] doodle_left_rgb;
 logic [79:0][79:0] doodle_left_alpha;
 `INITIAL_DOODLE_LEFT
@@ -42,7 +40,6 @@ logic [79:0][79:0] doodle_left_alpha;
 logic [79:0][79:0][2:0][3:0] doodle_right_rgb;
 logic [79:0][79:0] doodle_right_alpha;
 `INITIAL_DOODLE_RIGHT
-
 
 // coloring
 wire draw = doodle_x <= beam_x && beam_x < doodle_x + WIDTH - 2

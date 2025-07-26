@@ -18,7 +18,8 @@ logic [281:0][229:0] signa_transparent_alpha;
 
 always_ff @ (posedge clk) begin
 	if (game_state == 2
-	        && beam_x >= GAME_VIEW_LEFT_BORDER_X + 56 && beam_x <= GAME_VIEW_LEFT_BORDER_X + 287 && beam_y >= 269 && beam_y <= 551) begin
+	        && beam_x >= GAME_VIEW_LEFT_BORDER_X + 56 && beam_x < GAME_VIEW_LEFT_BORDER_X + 286
+	        && beam_y >= 269 && beam_y < 551) begin
 		color[0] <= signa_transparent_rgb[beam_y - 269][beam_x - 56 - GAME_VIEW_LEFT_BORDER_X][0];
 		color[1] <= signa_transparent_rgb[beam_y - 269][beam_x - 56 - GAME_VIEW_LEFT_BORDER_X][1];
 		color[2] <= signa_transparent_rgb[beam_y - 269][beam_x - 56 - GAME_VIEW_LEFT_BORDER_X][2];
