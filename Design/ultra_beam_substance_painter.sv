@@ -12,6 +12,7 @@ module ultra_beam_substance_painter #(
 	input end_signa_transparency,
     input [2:0][3:0] tabloid_color,
     input tabloid_transparency,
+    input [1:0] game_state,
 
 	input draw,
 	
@@ -40,9 +41,15 @@ always_comb begin
 			green = doodle_color[1];
 			blue = doodle_color[2];
 		end else if (~platform_transparencies) begin
-			red = platform_colors[0];
-			green = platform_colors[1];
-			blue = platform_colors[2];
+		    if (game_state == 2) begin
+		        red = platform_colors[0] <= 10 ? platform_colors[0] + 7 : 13;
+                green = platform_colors[1] <= 10 ? platform_colors[1] + 7 : 13;
+                blue = platform_colors[2] <= 10 ? platform_colors[2] + 7 : 13;
+		    end else begin
+                red = platform_colors[0];
+                green = platform_colors[1];
+                blue = platform_colors[2];
+			end
 		end else begin
 			red = '1;
 			green = '1;

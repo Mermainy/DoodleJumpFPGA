@@ -213,6 +213,7 @@ ultra_beam_substance_painter #(
 	.end_signa_transparency(end_signa_transparency),
 	.tabloid_color(tabloid_color),
     .tabloid_transparency(tabloid_transparency),
+    .game_state(game_state),
 
 	.draw(draw),
 
