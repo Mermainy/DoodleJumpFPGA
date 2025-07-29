@@ -53,7 +53,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/doodle_right.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Design/textures/doodle_left.sv
 set_global_assignment -name FAMILY "MAX 10"
 set_global_assignment -name DEVICE 10M50DAF484C7G
-set_global_assignment -name TOP_LEVEL_ENTITY game
+set_global_assignment -name TOP_LEVEL_ENTITY board_specific
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 24.1STD.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "08:50:41  MAY 18, 2025"
 set_global_assignment -name LAST_QUARTUS_VERSION "24.1std.0 Lite Edition"
@@ -68,7 +68,7 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_symbol
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_signal_integrity
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_boundary_scan
-set_global_assignment -name SYSTEMVERILOG_FILE Design/board_specific.sv
+set_global_assignment -name SYSTEMVERILOG_FILE board_specific.sv
 set_location_assignment PIN_P11 -to MAX10_CLK1_50
 set_location_assignment PIN_B8 -to KEY[0]
 set_location_assignment PIN_A7 -to KEY[1]

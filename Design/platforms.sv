@@ -1,6 +1,4 @@
 module platforms # (
-    parameter int unsigned FPS,
-	parameter int unsigned CLK,
 	parameter int signed EARTH,
 	parameter int unsigned WORLD_SHIFT,
 	parameter int signed PLATFORM_HEIGHT,
@@ -8,7 +6,7 @@ module platforms # (
 ) (
 	input clk,
 	input rst,
-	input [$clog2(CLK / FPS):0] fps_counter,
+	input calculation_time,
 
 	input [10:0] beam_x,
 	input [9:0] beam_y,
@@ -48,7 +46,7 @@ always_ff @ (posedge clk)
 				platforms[i * 3 + j][1] <= 342 + j * 114;
 			end
 		platform_activation <= random_start;
-    end else if (&fps_counter) begin
+    end else if (calculation_time) begin
         for (int j = 0; j < 6; j++)
             for (int i = j * 15; i < (j + 1) * 15; i++) begin
                 if ($signed(platforms[j * 15][0]) == EARTH) begin

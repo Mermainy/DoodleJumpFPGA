@@ -14,9 +14,10 @@ module game #(
 	parameter int unsigned GAME_VIEW_LEFT_BORDER_X = 340,
 	parameter int unsigned GAME_VIEW_RIGHT_BORDER_X = 682
 ) (
-	input MAX10_CLK1_50,
-	input [9:0] SW,
-	input [1:0] KEY,
+	input clk,
+	input rst,
+	input button_left,
+	input button_right,
 
 	output VGA_HS,
 	output VGA_VS,
@@ -25,47 +26,24 @@ module game #(
 	output logic [3:0] VGA_B
 );
 
-logic clk;
-wire rst = SW[0];
-logic [$clog2(CLK / FPS):0] fps_counter;
 logic [1:0] game_state;
 
-logic button_left;
-logic button_right;
-logic [10:0] beam_x_raw;
-logic [9:0] beam_y_raw;
-logic [10:0] beam_x;
-logic [9:0] beam_y;
-
+wire calculation_time = &fps_counter;
+logic [$clog2(CLK / FPS):0] fps_counter;
 always_ff @ (posedge clk)
     if (rst)
         fps_counter <= '0;
     else
         fps_counter <= fps_counter + 1;
 
-board_specific bs(
-	.MAX10_CLK1_50(MAX10_CLK1_50),
-	.KEY(KEY),
-	.beam_x_raw(beam_x_raw),
-	.beam_y_raw(beam_y_raw),
-	
-	.clk(clk),
-	.button_left(button_left),
-	.button_right(button_right),
-	.beam_x(beam_x),
-	.beam_y(beam_y)
-);
-
 logic signed [8:0] delta_x;
 control #(
-    .FPS(FPS),
-	.CLK(CLK),
 	.EARTH(EARTH),
 	.DOODLE_HEIGHT(DOODLE_HEIGHT)
 ) c (
 	.clk(clk),
 	.rst(rst),
-	.fps_counter(fps_counter),
+	.calculation_time(calculation_time),
 
 	.button_left(button_left),
 	.button_right(button_right),
@@ -75,7 +53,11 @@ control #(
 	.delta_x(delta_x)
 );
 
+wire [10:0] beam_x = beam_x_raw - 159;
+wire [9:0] beam_y = beam_y_raw - 28;
 logic draw;
+logic [10:0] beam_x_raw;
+logic [9:0] beam_y_raw;
 beam_establisher be(
 	.clk(clk),
 	.rst(rst),
@@ -119,8 +101,6 @@ logic doodle_fall_direction;
 logic [9:0] doodle_y;
 logic [10:0] doodle_x;
 doodle #(
-    .FPS(FPS),
-	.CLK(CLK),
 	.EARTH(EARTH),
 	.VELOCITY(DOODLE_VELOCITY),
 	.ACCELERATION(DOODLE_ACCELERATION),
@@ -133,7 +113,7 @@ doodle #(
 ) d (
 	.clk(clk),
 	.rst(rst),
-	.fps_counter(fps_counter),
+	.calculation_time(calculation_time),
 
 	.beam_x(beam_x),
 	.beam_y(beam_y),
@@ -157,8 +137,6 @@ logic [89:0] platform_activation;
 logic [2:0][3:0] platform_colors;
 logic platform_transparencies;
 platforms #(
-    .FPS(FPS),
-	.CLK(CLK),
 	.EARTH(EARTH),
 	.WORLD_SHIFT(WORLD_SHIFT),
 	.PLATFORM_HEIGHT(PLATFORM_HEIGHT),
@@ -166,7 +144,7 @@ platforms #(
 ) p (
 	.clk(clk),
 	.rst(rst),
-	.fps_counter(fps_counter),
+	.calculation_time(calculation_time),
 
 	.beam_x(beam_x),
 	.beam_y(beam_y),
@@ -202,13 +180,11 @@ signa #(
 logic [2:0][3:0] tabloid_color;
 logic tabloid_transparency;
 tabloid #(
-    .FPS(FPS),
-	.CLK(CLK),
 	.GAME_VIEW_LEFT_BORDER_X(GAME_VIEW_LEFT_BORDER_X)
 ) t (
     .clk(clk),
 	.rst(rst),
-	.fps_counter(fps_counter),
+	.calculation_time(calculation_time),
 
 	.game_state(game_state),
 

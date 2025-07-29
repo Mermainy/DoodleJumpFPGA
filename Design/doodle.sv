@@ -1,6 +1,4 @@
 module doodle # (
-    parameter int unsigned FPS,
-	parameter int unsigned CLK,
 	parameter int signed EARTH,
 	parameter int unsigned VELOCITY,
 	parameter int unsigned ACCELERATION,
@@ -13,7 +11,7 @@ module doodle # (
 ) (
 	input clk,
 	input rst,
-	input [$clog2(CLK / FPS):0] fps_counter,
+	input calculation_time,
 
 	input [10:0] beam_x,
 	input [9:0] beam_y,
@@ -82,7 +80,7 @@ always_ff @ (posedge clk) begin
 		jump_counter <= '0;
 		move_counter <= '0;
 	end else if (game_state == 1) begin
-		if (&fps_counter) begin
+		if (calculation_time) begin
 			if (doodle_x <= GAME_VIEW_LEFT_BORDER_X - WIDTH / 2)
 				doodle_x <= GAME_VIEW_RIGHT_BORDER_X - WIDTH / 2 - 1;
 			else if (doodle_x >= GAME_VIEW_RIGHT_BORDER_X - WIDTH / 2)
@@ -105,7 +103,7 @@ always_ff @ (posedge clk) begin
             end
 		end
 	end else if (game_state == 2) begin
-	    if (&fps_counter) begin
+	    if (calculation_time) begin
 	        doodle_y <= ground[0] - HEIGHT - VELOCITY * jump_counter + ACCELERATION * jump_counter * jump_counter / 100;
 	        if (doodle_y < EARTH)
 	            jump_counter <= jump_counter + 1;

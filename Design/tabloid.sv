@@ -1,13 +1,11 @@
 module tabloid #(
-    parameter int unsigned FPS,
-	parameter int unsigned CLK,
 	parameter int unsigned GAME_VIEW_LEFT_BORDER_X,
 	parameter int unsigned DIGIT_WIDTH = 13,
 	parameter int unsigned DIGIT_HEIGHT = 12
 ) (
     input clk,
 	input rst,
-	input [$clog2(CLK / FPS):0] fps_counter,
+	input calculation_time,
 
 	input [1:0] game_state,
 
@@ -27,7 +25,7 @@ always_ff @ (posedge clk)
 	    move_counter <= '0;
 	    score <= '0;
 	end else if (game_state == 1) begin
-	    if (&fps_counter) begin
+	    if (calculation_time) begin
 	        if (move_collision || move_counter) begin
                 move_counter <= move_counter + 1;
                 if (move_counter == 0)
@@ -81,7 +79,8 @@ logic [11:0][12:0] nine_transparent_alpha;
 always_ff @ (posedge clk) begin
     is_transparent <= 1;
     for (int i = 0; i < 4; i++)
-        if (beam_x >= GAME_VIEW_LEFT_BORDER_X + 266 + 2 * i + DIGIT_WIDTH * i && beam_x < GAME_VIEW_LEFT_BORDER_X + 266 + 2 * i + DIGIT_WIDTH * (i + 1)
+        if (beam_x >= GAME_VIEW_LEFT_BORDER_X + 266 + 2 * i + DIGIT_WIDTH * i
+                && beam_x < GAME_VIEW_LEFT_BORDER_X + 266 + 2 * i + DIGIT_WIDTH * (i + 1)
                 && beam_y >= 22 && beam_y < 22 + DIGIT_HEIGHT)
             case (i == 0 ? score / 1000 : i == 1 ? (score / 100) % 10 : i == 2 ? (score / 10) % 10 : score % 10)
                 0: begin
